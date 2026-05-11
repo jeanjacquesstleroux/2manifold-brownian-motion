@@ -27,12 +27,12 @@ The papers are in strict dependency order. Do not start Paper N+1 until you can 
 Work through these before anything else. These are not review for completeness — each item reappears explicitly in the geometry.
 
 **Inner Products and Projections**
-- [ ] Define the dot product on ℝⁿ as a bilinear, symmetric, positive definite form. State all three properties precisely.
-- [ ] Define the norm induced by the dot product: |v| = √(v · v)
-- [ ] Define the angle between two vectors via cos θ = (u · v)/(|u||v|). Derive this from the law of cosines.
-- [ ] State and prove: two vectors are orthogonal iff their dot product is zero
-- [ ] Define orthogonal projection of u onto v: proj_v(u) = (u·v / v·v) v
-- [ ] Define the component of u orthogonal to v: u_⊥ = u − proj_v(u)
+- [x] Define the dot product on ℝⁿ as a bilinear, symmetric, positive definite form. State all three properties precisely.
+- [x] Define the norm induced by the dot product: |v| = √(v · v)
+- [x] Define the angle between two vectors via cos θ = (u · v)/(|u||v|). Derive this from the law of cosines.
+- [x] State and prove: two vectors are orthogonal iff their dot product is zero
+- [x] Define orthogonal projection of u onto v: proj_v(u) = (u·v / v·v) v
+- [x] Define the component of u orthogonal to v: u_⊥ = u − proj_v(u)
 - [ ] **Key result**: Write the projection onto a subspace W with orthonormal basis {e_1, ..., e_k}: P_W(u) = Σ (u · e_i) e_i. Derive P_{W⊥}(u) = u − P_W(u). This is exactly the formula P_x v = v − (v·x)x used in the BM projection scheme when x is the unit normal.
 - [ ] Define orthogonal complement W⊥ and prove ℝⁿ = W ⊕ W⊥
 
