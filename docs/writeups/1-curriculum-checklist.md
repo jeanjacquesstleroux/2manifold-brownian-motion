@@ -33,11 +33,11 @@ Work through these before anything else. These are not review for completeness �
 - [x] State and prove: two vectors are orthogonal iff their dot product is zero
 - [x] Define orthogonal projection of u onto v: proj_v(u) = (u·v / v·v) v
 - [x] Define the component of u orthogonal to v: u_⊥ = u − proj_v(u)
-- [ ] **Key result**: Write the projection onto a subspace W with orthonormal basis {e_1, ..., e_k}: P_W(u) = Σ (u · e_i) e_i. Derive P_{W⊥}(u) = u − P_W(u). This is exactly the formula P_x v = v − (v·x)x used in the BM projection scheme when x is the unit normal.
-- [ ] Define orthogonal complement W⊥ and prove ℝⁿ = W ⊕ W⊥
+- [x] **Key result**: Write the projection onto a subspace W with orthonormal basis {e_1, ..., e_k}: P_W(u) = Σ (u · e_i) e_i. Derive P_{W⊥}(u) = u − P_W(u). This is exactly the formula P_x v = v − (v·x)x used in the BM projection scheme when x is the unit normal.
+- [x] Define orthogonal complement W⊥ and prove ℝⁿ = W ⊕ W⊥
 
 **Matrices as Linear Maps**
-- [ ] State: every linear map T: ℝⁿ → ℝᵐ has a matrix representation [T] depending on the choice of basis
+- [x] State: every linear map T: ℝⁿ → ℝᵐ has a matrix representation [T] depending on the choice of basis
 - [ ] Define symmetric matrix (A = Aᵀ) and state the spectral theorem: every symmetric matrix has real eigenvalues and an orthonormal basis of eigenvectors
 - [ ] Define positive definite matrix: A is positive definite iff vᵀAv > 0 for all v ≠ 0. Equivalently, all eigenvalues are positive.
 - [ ] Define a change-of-basis matrix P and how components of a vector transform: if v = Σ vⁱ eᵢ in basis {eᵢ} and {ẽⱼ} is a new basis, how do the components vⁱ change? (Contravariant transformation rule)
