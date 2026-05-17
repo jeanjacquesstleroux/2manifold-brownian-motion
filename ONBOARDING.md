@@ -1,6 +1,6 @@
 # Brownian Motion on Manifolds
 
-## A Computational Project in Stochastic Geometry
+## Onboarding Document
 
 ---
 
