@@ -1,0 +1,6 @@
+#!/Users/stleroux/2manifold-brownian-motion/.venv/bin/python3.13
+import sys
+from nbconvert.nbconvertapp import main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(main())
