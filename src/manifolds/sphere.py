@@ -1,5 +1,5 @@
 # Import the base class that contains Manifold abstract methods
-from base import Manifold
+from .base import Manifold
 import numpy as np
 
 class Sphere(Manifold):

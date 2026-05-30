@@ -1,4 +1,4 @@
-#!/Users/stleroux/2manifold-brownian-motion/.venv/bin/python3.13
+#!/Users/danielleprilepskiy/github/2manifold-brownian-motion/.venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
