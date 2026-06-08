@@ -28,6 +28,19 @@ class Sphere(Manifold):
         '''
         norm = np.linalg.norm(x)
         return x / norm
+    
+    def project_to_manifold_multiple(self, X):
+        '''Normalizes more than one point (all the points are defined 
+        as X), ensuring they are all on the sphere.
+        
+        Arguments:
+            X: Many points in R^3 that may or may not lie on the sphere.
+        
+        Returns:
+            The normalized form of all of the points of X.
+        '''
+        norms = np.linalg.norm(X, axis=1, keepdims=True)
+        return X / norms
         
     def project_to_tangent(self, x, v):
         '''Removes the radial component and only returns the tangential 
@@ -52,6 +65,32 @@ class Sphere(Manifold):
         '''
         dot_prod = np.dot(v, x)
         return v - (dot_prod * x)
+    
+    def project_to_tangent_multiple(self, X, V):
+        '''Removes the radial component and only returns the tangential 
+        component of every vector in the group of vectors V at every point
+        in the group of points X. This makes each vector in V lie in the 
+        tangent space of its respective point in the group of points X, 
+        which represents all the possible directions the point can move 
+        while staying on the sphere.
+        
+        Uses the formula:
+            v_tangential = v - (dot product of v and x)x
+            
+        This removes the component of a vector in the direction of a point, 
+        leaving only the component orthogonal to the point.
+        
+        Arguments:
+            X: A set of points on the sphere.
+            V: A set of tangent vectors in R^3 which correspond to a point 
+            in X, which may or may not be tangent at that point.
+            
+        Returns:
+            The component of each vector in V which lies in the tangent space 
+            of its respective point in X.
+        '''
+        dot_prod = np.sum(V * X, axis=1, keepdims=True)
+        return V - (dot_prod * X)
         
     def sample_tangent_noise(self, x):
         '''
