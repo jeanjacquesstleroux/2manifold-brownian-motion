@@ -1,7 +1,7 @@
 from src.manifolds.sphere import Sphere
 import numpy as np
 
-def simulator(T, N, dt):
+def simulator(T, N, dt, noise_type):
     # Initialize N particles at a point on the sphere
     points = np.tile([1.0, 0.0, 0.0], (N, 1))
     # Initialize the trajectory to an empty array to later store the new poisitions of each point in points
@@ -9,15 +9,13 @@ def simulator(T, N, dt):
     
     # Initialize a sphere object
     sphere = Sphere()
-    # Set up random number generator
-    rng = np.random.default_rng()
-    
+        
     # Go through each time step
     for t in range(T):
-        # Create random noise of shape (N, 3) for each point in points using random number generator
-        noise = rng.standard_normal((N, 3))
-        # Project each noise vector onto the tangent space of its particle
-        noise = sphere.project_to_tangent_multiple(points, noise)
+        if noise_type == "isotropic":
+            noise = sphere.sample_tangent_noise_multiple(points)
+        elif noise_type == "anisotropic":
+            noise = sphere.sample_tangent_noise_anisotropic_multiple(points)
         # Scale the noise by square root of dt
         noise_scaled = np.sqrt(dt) * noise
         # Add the noise to all of the particles in points
@@ -32,5 +30,7 @@ def simulator(T, N, dt):
 T = 200
 N = 100
 dt = 0.1
-trajectory = simulator(T, N, dt)
+trajectory = simulator(T, N, dt, "isotropic")
 assert trajectory.shape == (T, N, 3)
+trajectory_two = simulator(T, N, dt, "anisotropic")
+assert trajectory_two.shape == (T, N, 3)

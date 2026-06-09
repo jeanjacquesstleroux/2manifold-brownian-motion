@@ -106,6 +106,64 @@ class Sphere(Manifold):
         '''
         rand_vect = np.random.randn(3)
         return self.project_to_tangent(x, rand_vect)
+    
+    def sample_tangent_noise_multiple(self, X):
+        '''
+        Generates random Gaussian vectors for many points in R^3 on the sphere 
+        and projects each vector onto tangent spaceo of its respective point.
+        
+        Arguments:
+            X: A set of points on the sphere.
+            
+        Returns:
+            A set of random Gaussian tangent vectors in R^3.
+        '''
+        N = X.shape[0] # Get number of points in X
+        noise = np.random.randn(N, 3)
+        tangent_noise = self.project_to_tangent_multiple(X, noise)
+        return tangent_noise
+    
+    def sample_tangent_noise_anisotropic(self, x):
+        '''
+        Chooses one tangent direction at point x, generates one Gaussian random 
+        number and scales that tangent direction by the random number. This 
+        generates Brownian noise in only one tangent direction at point x on the 
+        sphere.
+        
+        Arguments:
+            x: A point on the sphere.
+            
+        Returns:
+            A random Gaussian tangent vector in R^3 at point x whose motion is 
+            constrained to only one tangent direction.
+        '''
+        random_vector = np.array([1.0, 1.0, 1.0])
+        tangent_vector = self.project_to_tangent(x, random_vector)
+        unit_tangent_vector = tangent_vector / (np.linalg.norm(tangent_vector))
+        noise = np.random.randn() # Scalar noise
+        unit_tangent_vector *= noise # Vector is constrained to only one direction (such as North/South)
+        return unit_tangent_vector
+    
+    def sample_tangent_noise_anisotropic_multiple(self, X):
+        '''
+        Generates anisotropic noise for many points on the sphere. Each point 
+        can only move in one fixed tangent direction, which is scaled by one 
+        scalar Gaussian random noise variable.
+        
+        Arguments:
+            X: A set of points on the sphere.
+            
+        Returns:
+            Random Gaussian tangent vectors in R^3.
+        '''
+        N = X.shape[0] # Get number of points in X
+        vector = np.array([1.0, 1.0, 1.0]) # Chosen tangent vector for each point in X
+        # Keep only the tangential component of every tangent vector respect to a point in X
+        tangent_directions = self.project_to_tangent_multiple(X, np.tile(vector, (N, 1)))
+        unit_tangent_directions = tangent_directions / (np.linalg.norm(tangent_directions, axis=1, keepdims=True))
+        noise = np.random.randn(N, 1)
+        anisotropic_noise = unit_tangent_directions * noise # Noise in only one direction (along the vector)
+        return anisotropic_noise
         
     def euler_maruyama_step(self, x, dt):
         '''Simulates one step of Brownian motion from point x to the next 
