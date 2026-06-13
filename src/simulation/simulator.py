@@ -1,14 +1,19 @@
 from src.manifolds.sphere import Sphere
 import numpy as np
 
-def simulator(T, N, dt, noise_type):
-    # Initialize N particles at a point on the sphere
-    points = np.tile([1.0, 0.0, 0.0], (N, 1))
-    # Initialize the trajectory to an empty array to later store the new poisitions of each point in points
-    trajectory = np.zeros((T, N, 3))
-    
+# Simulator function for predefined points - for Notebook 2
+def simulator(T, N, dt, noise_type, starting_point=None):
     # Initialize a sphere object
     sphere = Sphere()
+    
+    # Initialize N particles at a point on the sphere
+    if starting_point is None:
+        points = np.tile([1.0, 0.0, 0.0], (N, 1))
+    else:
+        starting_point = sphere.project_to_manifold(starting_point) # Avoid floating point errors, ensure point is on sphere
+        points = np.tile(starting_point, (N, 1))
+    # Initialize the trajectory to an empty array to later store the new poisitions of each point in points
+    trajectory = np.zeros((T, N, 3))
         
     # Go through each time step
     for t in range(T):
