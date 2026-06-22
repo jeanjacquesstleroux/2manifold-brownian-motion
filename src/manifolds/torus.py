@@ -106,24 +106,50 @@ class Torus(Manifold):
         the tangent space at point x, which is on the torus.
         
         The Cartesian point x is first converted into its corresponding 
-        parameters (u, v) using the torus' geometry. Then a random Euclidean 
-        vector is generated and projected onto tangent space of point x.
+        parameters (u, v) using the torus' geometry.
+        
+        Then, the derivative of X with respect to u and the derivate of X 
+        with respect to v are calculated. Both of them are normalized. 
+        These are the tangent drections (perpendicular to each other) on 
+        the surface.
+        
+        Two Gaussian random vectors are generated, multiplied to each 
+        tangent direction, and then summed to produce a single vector. 
+        This is the random step the point takes on the torus.
         
         Arguments:
             x: A point on the torus.
             
         Returns:
-            A random Gaussian vector in R^3 which is on the tangent space 
-            at point x on the sphere.
+            A random vector in R^3 which is on the tangent space at point 
+            x on the torus.
         '''
-        rand_vect = np.random.randn(3)
         x_coor = x[0]
         y_coor = x[1]
         z_coor = x[2]
         u = math.atan2(y_coor, x_coor)
         rho = math.sqrt(x_coor**2 + y_coor**2)
         v = math.atan2(z_coor, rho - self.R)
-        return self.project_to_tangent(u, v, rand_vect)
+        
+        X_u = np.array([
+            -(self.R + self.r * np.cos(v)) * np.sin(u),
+            (self.R + self.r * np.cos(v)) * np.cos(u),
+            0
+        ])
+
+        X_v = np.array([
+            -self.r * np.sin(v) * np.cos(u),
+            -self.r * np.sin(v) * np.sin(u),
+            self.r * np.cos(v)
+        ])
+
+        e_u = X_u / np.linalg.norm(X_u)
+        e_v = X_v / np.linalg.norm(X_v)
+
+        a = np.random.randn()
+        b = np.random.randn()
+
+        return a * e_u + b * e_v
     
     def project_to_manifold(self, x):
         '''Projects a point in R^3 onto the torus. The projection is computed 
@@ -159,3 +185,35 @@ class Torus(Manifold):
         
         point = center + self.r * unit_offset
         return point
+    
+    def euler_maruyama_step(self, x, dt):
+        '''Simulates one step of Brownian motion from point x to the next 
+        point on the torus. Noise is first generated for point x and 
+        then scaled by the square root of the time step. Then the next 
+        point becomes the previous plus the scaled noise and must be 
+        projected onto the torus.
+        
+        Variance measures how spread out the random positions are. It grows 
+        linearly with time (t). Standard deviation is the square root of 
+        variance and represents the net displacement (the distance from the 
+        start). Hence, the distance the walker travels from the starting point 
+        increases with the square root of t.
+        
+        The formula used to find the noise scaled is:
+            Change in W_t = square root of change in t * Z, Z ~ N(0, 1)
+            
+        where change in W_t is the total random change in the system for the respective 
+        time step, t is the time step and Z is the standard normal random 
+        noise.
+        
+        Arguments: 
+            x: A point on the torus.
+            dt: A time step.
+        
+        Returns:
+            The next point on the torus.
+        '''
+        noise = self.sample_tangent_noise(x)
+        noise_scaled = np.sqrt(dt) * noise
+        x_updated = x + noise_scaled
+        return self.project_to_manifold(x_updated)
