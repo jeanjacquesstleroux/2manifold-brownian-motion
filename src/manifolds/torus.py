@@ -4,7 +4,20 @@ import numpy as np
 import math
 
 class Torus(Manifold):
-    """Add summary here
+    """The Torus class defines a geometric representation of a torus in R^3. 
+    It stores the torus parameters R and r, the major and minor radius, 
+    respectively. 
+    
+    The class also includes methods for parameterization 
+    (converting between torus coordinates (u, v) and Cartesian coordinates 
+    (x, y, z)), computing surface normals and tangent directions, projecting 
+    points in R^3 onto the torus surface, and simulating Brownian motion 
+    using the Euler-Maruyama method.
+    
+    The Torus class ensures that all simulated points are constrained to the 
+    torus manifold for each step to an updated position on the torus. It also 
+    enables simulations to store the trajectory a point takes after many time 
+    steps.
     """
     def __init__(self, R, r):
         """Initializes the major and minor radii that define the torus' 
