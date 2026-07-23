@@ -94,41 +94,19 @@ A particularly compelling visualization in this project comes from empirically e
 
 ### The Sphere
 
-The sphere is the natural first surface because its geometry is familiar and its curvature is
+The sphere is the natural first surface because its geometry is familiar and its curvature is uniform; every point on the sphere looks like every other point. The behavior of Brownian motion on the sphere is thus well-understood. It is recurrent (the particle returns arbitrarily close to its starting point infinitely often), and the heat kernel converges to the uniform distribution at a rate governed by the first nontrivial eigenvalue of the Laplace-Beltrami operator.
 
-uniform; every point on the sphere looks like every other point. The behavior of Brownian motion on the sphere is well-understood theoretically: it is recurrent (the particle returns arbitrarily close to its starting point infinitely often), and the heat kernel converges to the uniform distribution at a rate governed by the first nontrivial eigenvalue of the Laplace-Beltrami operator.
-
-The sphere also provides the clearest opportunity for validation: the exact heat kernel on the
-
-sphere is known, expressed as a series involving Legendre polynomials. Comparing the empirical
-
-density from simulation to the exact formula at several times gives a concrete accuracy check.
+The sphere also provides the rather straightforward opportunity for validation as the exact heat kernel on the sphere is known, expressed as a series involving Legendre polynomials. Comparing the empirical density from simulation to the exact formula at several times gives a concrete accuracy check.
 
 ### The Torus
 
-The torus introduces a new geometric feature: it is flat (its Gaussian curvature is zero almost
-
-everywhere), but its global topology is non-trivial. Brownian motion on a flat torus behaves
-
-locally exactly like Brownian motion on a flat plane — but the torus wraps around, so the
-
-particle cannot escape. The invariant distribution is again uniform. The heat kernel on the
-
-torus has a particularly elegant form — it is a sum of flat Gaussians placed at the images of
-
-the starting point under the torus's translation symmetry — which connects the simulation
-
-directly to the theory of theta functions and Fourier analysis on groups.
-
+The torus introduces a new geometric feature: it is flat (its Gaussian curvature is zero almost everywhere), but its global topology is non-trivial. Brownian motion on a flat torus behaves locally exactly like Brownian motion on a flat plane — but the torus wraps around, so the particle cannot escape. The invariant distribution is again uniform. The heat kernel on the torus is a sum of flat Gaussians placed at the images of the starting point under the torus's translation symmetry.
+ 
 The torus is also computationally instructive because periodic boundary conditions are a staple technique in physics simulations. Implementing them correctly requires careful modular arithmetic.
 
 ### The Hyperbolic Plane (Our Stretch Goal)
 
-The hyperbolic plane is the most striking surface in the project. Its constant
-
-negative curvature has a counterintuitive consequence: there is so much room in the hyperbolic plane that a random walker is transient. The particle drifts to infinity and never returns.
-
-In the Poincaré disk representation, where the entire infinite hyperbolic plane is mapped to the interior of a unit disk, this means the particle's path converges to a point on the boundary circle, chosen at random. This boundary behavior is called the Poisson boundary of the hyperbolic plane.
+The hyperbolic plane is the most striking surface in the project. Its constant negative curvature has a counterintuitive consequence: there is so much room in the hyperbolic plane that a random walker is transient. The particle drifts to infinity and never returns. In the Poincaré disk representation, where the entire infinite hyperbolic plane is mapped to the interior of a unit disk, this means the particle's path converges to a point on the boundary circle, chosen at random. This boundary behavior is called the Poisson boundary of the hyperbolic plane.
 
 Unlike the sphere and torus, where the particle cloud eventually fills the space uniformly, the cloud on the hyperbolic plane concentrates toward the boundary circle and never equilibrates.
 
@@ -136,9 +114,7 @@ Unlike the sphere and torus, where the particle cloud eventually fills the space
 
 ## 5. Implementation Strategy
 
-The project is organized as a Python library with a testable structure. The manifold geometry (how points are represented, how tangent vectors are computed, how the projection step works) is separate from the simulation process (which only knows that it needs a "step" and a "project" operation), which is separate from the visualization layer. Thus, adding a new surface requires implementing only the geometry module for that surface, with no changes to the simulator or the visualizer. It also makes the code testable since each module has clear inputs and outputs that can be verified
-
-independently.
+The project is organized as a Python library with a testable structure. The manifold geometry (how points are represented, how tangent vectors are computed, how the projection step works) is separate from the simulation process (which only knows that it needs a "step" and a "project" operation), which is separate from the visualization layer. Thus, adding a new surface requires implementing only the geometry module for that surface, with no changes to the simulator or the visualizer. It also makes the code testable since each module has clear inputs and outputs that can be verified independently.
 
 ### Performance
 
