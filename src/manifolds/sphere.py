@@ -139,7 +139,16 @@ class Sphere(Manifold):
         '''
         random_vector = np.array([1.0, 1.0, 1.0])
         tangent_vector = self.project_to_tangent(x, random_vector)
-        unit_tangent_vector = tangent_vector / (np.linalg.norm(tangent_vector))
+        tangent_norm = np.linalg.norm(tangent_vector)
+        if tangent_norm < 1e-8:
+            # x is (nearly) parallel to random_vector, so its tangential
+            # component vanishes. Fall back to a direction that is
+            # orthogonal to random_vector, so it can never be degenerate
+            # at the same point.
+            random_vector = np.array([1.0, -1.0, 0.0])
+            tangent_vector = self.project_to_tangent(x, random_vector)
+            tangent_norm = np.linalg.norm(tangent_vector)
+        unit_tangent_vector = tangent_vector / tangent_norm
         noise = np.random.randn() # Scalar noise
         unit_tangent_vector *= noise # Vector is constrained to only one direction (such as North/South)
         return unit_tangent_vector
@@ -160,7 +169,19 @@ class Sphere(Manifold):
         vector = np.array([1.0, 1.0, 1.0]) # Chosen tangent vector for each point in X
         # Keep only the tangential component of every tangent vector respect to a point in X
         tangent_directions = self.project_to_tangent_multiple(X, np.tile(vector, (N, 1)))
-        unit_tangent_directions = tangent_directions / (np.linalg.norm(tangent_directions, axis=1, keepdims=True))
+        norms = np.linalg.norm(tangent_directions, axis=1, keepdims=True)
+        # For any points (nearly) parallel to vector, the tangential component
+        # vanishes; recompute those rows with a direction orthogonal to
+        # vector, which can never be degenerate at the same points.
+        degenerate = norms[:, 0] < 1e-8
+        if np.any(degenerate):
+            fallback_vector = np.array([1.0, -1.0, 0.0])
+            fallback_directions = self.project_to_tangent_multiple(
+                X[degenerate], np.tile(fallback_vector, (degenerate.sum(), 1))
+            )
+            tangent_directions[degenerate] = fallback_directions
+            norms[degenerate] = np.linalg.norm(fallback_directions, axis=1, keepdims=True)
+        unit_tangent_directions = tangent_directions / norms
         noise = np.random.randn(N, 1)
         anisotropic_noise = unit_tangent_directions * noise # Noise in only one direction (along the vector)
         return anisotropic_noise
@@ -194,6 +215,6 @@ class Sphere(Manifold):
         '''
         noise = self.sample_tangent_noise(x)
         noise_scaled = np.sqrt(dt) * noise
-        x += noise_scaled
+        x = x + noise_scaled
         return self.project_to_manifold(x)
         

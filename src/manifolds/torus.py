@@ -113,6 +113,69 @@ class Torus(Manifold):
         tangential_vector = vector - (np.dot(vector, normal)) * normal
         return tangential_vector
     
+    def project_to_manifold_multiple(self, X):
+        '''Vectorized version of project_to_manifold for many points at once.
+
+        Arguments:
+            X: An (N, 3) array of points in R^3 that may or may not lie on
+            the torus.
+
+        Returns:
+            An (N, 3) array containing the nearest point on the torus for
+            each input point.
+        '''
+        x_coor = X[:, 0]
+        y_coor = X[:, 1]
+
+        distance_from_z = np.sqrt(x_coor**2 + y_coor**2)
+        center_x = self.R * (x_coor / distance_from_z)
+        center_y = self.R * (y_coor / distance_from_z)
+        center = np.stack([center_x, center_y, np.zeros_like(center_x)], axis=1)
+
+        offset = X - center
+        offset_norm = np.linalg.norm(offset, axis=1, keepdims=True)
+        unit_offset = offset / offset_norm
+
+        return center + self.r * unit_offset
+
+    def sample_tangent_noise_multiple(self, X):
+        '''Vectorized version of sample_tangent_noise for many points at once.
+
+        Arguments:
+            X: An (N, 3) array of points on the torus.
+
+        Returns:
+            An (N, 3) array of random tangent vectors, one per input point.
+        '''
+        x_coor = X[:, 0]
+        y_coor = X[:, 1]
+        z_coor = X[:, 2]
+
+        u = np.arctan2(y_coor, x_coor)
+        rho = np.sqrt(x_coor**2 + y_coor**2)
+        v = np.arctan2(z_coor, rho - self.R)
+
+        X_u = np.stack([
+            -(self.R + self.r * np.cos(v)) * np.sin(u),
+            (self.R + self.r * np.cos(v)) * np.cos(u),
+            np.zeros_like(u)
+        ], axis=1)
+
+        X_v = np.stack([
+            -self.r * np.sin(v) * np.cos(u),
+            -self.r * np.sin(v) * np.sin(u),
+            self.r * np.cos(v)
+        ], axis=1)
+
+        e_u = X_u / np.linalg.norm(X_u, axis=1, keepdims=True)
+        e_v = X_v / np.linalg.norm(X_v, axis=1, keepdims=True)
+
+        N = X.shape[0]
+        a = np.random.randn(N, 1)
+        b = np.random.randn(N, 1)
+
+        return a * e_u + b * e_v
+
     def sample_tangent_noise(self, x):
         '''
         Generates a random Gaussian vector in R^3 and projects it onto 

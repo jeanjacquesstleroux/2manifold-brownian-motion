@@ -1,4 +1,5 @@
 from src.manifolds.sphere import Sphere
+from src.manifolds.torus import Torus
 import numpy as np
 
 # Simulator function for predefined points - for Notebook 2
@@ -30,12 +31,34 @@ def simulator(T, N, dt, noise_type, starting_point=None):
         # Store the new positions of each point in the trajectory array
         trajectory[t] = points
     return trajectory
-        
-# Verify that shape of trajectory is (T, N, 3)
-T = 200
-N = 100
-dt = 0.1
-trajectory = simulator(T, N, dt, "isotropic")
-assert trajectory.shape == (T, N, 3)
-trajectory_two = simulator(T, N, dt, "anisotropic")
-assert trajectory_two.shape == (T, N, 3)
+
+# Vectorized simulator for the torus (isotropic noise only - anisotropic
+# noise is not yet implemented for the Torus manifold)
+def torus_simulator(T, N, dt, R, r, starting_point=None):
+    torus = Torus(R, r)
+
+    if starting_point is None:
+        starting_point = torus.parametrize(0.0, 0.0)
+    points = np.tile(starting_point, (N, 1))
+    trajectory = np.zeros((T, N, 3))
+
+    for t in range(T):
+        noise = torus.sample_tangent_noise_multiple(points)
+        noise_scaled = np.sqrt(dt) * noise
+        points = points + noise_scaled
+        points = torus.project_to_manifold_multiple(points)
+        trajectory[t] = points
+    return trajectory
+
+
+if __name__ == "__main__":
+    # Verify that shape of trajectory is (T, N, 3)
+    T = 200
+    N = 100
+    dt = 0.01
+    trajectory = simulator(T, N, dt, "isotropic")
+    assert trajectory.shape == (T, N, 3)
+    trajectory_two = simulator(T, N, dt, "anisotropic")
+    assert trajectory_two.shape == (T, N, 3)
+    trajectory_three = torus_simulator(T, N, dt, R=3, r=1)
+    assert trajectory_three.shape == (T, N, 3)

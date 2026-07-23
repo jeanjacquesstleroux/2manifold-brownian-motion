@@ -12,11 +12,10 @@ def sphere_kde(final_positions, x_surface, y_surface, z_surface, k=None, N=None)
     # Put the coordinates as points on the mesh surface
     mesh = np.stack([x_one_dim, y_one_dim, z_one_dim], axis=1)
 
-    # Choose the value of k parameter
+    # Choose the value of k parameter: honor an explicitly given k, and
+    # only fall back to a default (scaled by N when available) if none was given
     if k is None:
-        k = 20
-    else:
-        k = math.sqrt(N)
+        k = math.sqrt(N) if N else 20
 
     # Compute all the dot products
     mesh = mesh.transpose()  # shape becomes (3, M)
