@@ -43,12 +43,11 @@ motion.
 | Surface | Curvature | Behavior | Trajectory shape |
 | --- | --- | --- | --- |
 | Sphere `S^2` | Positive, constant | Recurrent; the particle distribution converges to uniform over the surface | `(T, N, 3)` |
-| Torus `T^2` | Zero on average, non-trivial topology | Particles wrap around the surface rather than escaping it | `(T, N, 3)` |
-| Poincare disk `H^2` | Negative, constant | Transient; paths converge almost surely to a random point on the boundary circle | `(T, N, 2)` |
+| Torus `T^2` | Zero on average, non-trivial topology | Particles wrap around the surface  | `(T, N, 3)` |
+| Poincare disk `H^2` | Negative, constant | Transient; paths converge to a random point on the boundary circle | `(T, N, 2)` |
 
-The hyperbolic plane is the odd one out at `(T, N, 2)` rather than
-`(T, N, 3)`. It has no isometric embedding into three-dimensional space
-(Hilbert's theorem), so wanderwalk represents it intrinsically, as genuine
+The hyperbolic plane has no isometric embedding into three-dimensional space
+(Hilbert's theorem), so wanderwalk represents it intrinsically as
 2D vectors in the open unit disk. The
 [hyperbolic plane tutorial](tutorials/03-hyperbolic.md) covers what follows
 from that.
@@ -82,7 +81,7 @@ from that.
 
 ## Installation
 
-The core library depends only on NumPy:
+The library depends only on NumPy:
 
 ```bash
 pip install wanderwalk
